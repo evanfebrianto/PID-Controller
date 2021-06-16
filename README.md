@@ -43,5 +43,41 @@ Below is the result of the PID control. The car is able to go explore full track
 ## Parameter Optimization
 In this implementation, I use manual tuning for `Kp`, `Ki`, and `Kd`. It is a bit difficult to find a robust number due to difference contour of the road but eventually, I managed to get good numbers that allows the car to run in full lap without any collision.
 
+### Manual Tuning
+I started with using P controller with Kp = 0.15 because I was using this value for the previous project, which is behavioral cloning. Based on the classroom, I understand the difference between P, PD, and PID controller as shown in the image below.
+![pid](media/pid_udacity.png)
+Using P controller, the car started to occilate. Hence, I added an arbitrary number for Kd to implement PD controller. I choose Kd = 2.0. This constant is good to handle the car moving at top speed of 30 mph. It can handle a sharp turn and allow the car to do complete the track. However, PID controller is a common implementation since in the real world we might have steering shift. Based on this fact, I choose a very small value of Ki which is 5.0e-4. These configuration shows a good result which I think it is quite good to pass the project.
+
+
+### Twiddle
+Another solution to find out the optimal parameters is to use twiddle. Below is the pseudo code for twiddle and its implementation in Python from the classroom.
+```python
+def twiddle(tol=1e-10): 
+    p = [0, 0, 0]
+    dp = [1, 1, 1]
+    robot = make_robot()
+    x_trajectory, y_trajectory, best_err = run(robot, p)
+    while best_err > tol:
+        for i in range(3):
+            p[i] += dp[i]
+            robot = make_robot()
+            x_trajectory, y_trajectory, err = run(robot, p)
+            if err < best_err:
+                best_err = err
+                dp[i] *= 1.1
+            else:
+                p[i] -= 2*dp[i]
+                robot = make_robot()
+                x_trajectory, y_trajectory, err = run(robot, p)
+                if err < best_err:
+                    best_err = err
+                    dp[i] *= 1.1
+                else:
+                    p[i] += dp[i]
+                    dp[i] *= 0.9
+    return p, best_err
+  ```
+  ![twiddle.png](media/twiddle.png)
+
 ## Other Improvement
 The improvement can be done by controlling the speed of the car using another PID controller. This allows to car to be more stable when having a sharp turn.
