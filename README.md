@@ -45,7 +45,9 @@ In this implementation, I use manual tuning for `Kp`, `Ki`, and `Kd`. It is a bi
 
 ### Manual Tuning
 I started with using P controller with Kp = 0.15 because I was using this value for the previous project, which is behavioral cloning. Based on the classroom, I understand the difference between P, PD, and PID controller as shown in the image below.
+
 ![pid](media/pid_udacity.png)
+
 Using P controller, the car started to occilate. Hence, I added an arbitrary number for Kd to implement PD controller. I choose Kd = 2.0. This constant is good to handle the car moving at top speed of 30 mph. It can handle a sharp turn and allow the car to do complete the track. However, PID controller is a common implementation since in the real world we might have steering shift. Based on this fact, I choose a very small value of Ki which is 5.0e-4. These configuration shows a good result which I think it is quite good to pass the project.
 
 
